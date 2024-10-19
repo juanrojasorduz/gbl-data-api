@@ -16,9 +16,10 @@ class User(db.Model):
     def json(self):
         return {'id': self.id,'username': self.username, 'email': self.email}
 
+#Initialize a Database
 db.create_all()
 
-#create a test route
+#Test Endpoint
 @app.route('/test', methods=['GET'])
 def test():
   return make_response(jsonify({'message': 'test route'}), 200)
