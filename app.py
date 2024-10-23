@@ -77,7 +77,7 @@ def get_object():
 
 # get a hired employee by id
 @app.route('/hired_employees/<int:id>', methods=['GET'])
-def get_object(id):
+def get_object_by_id(id):
   try:
     employee = HiredEmployees.query.filter_by(id=id).first()
     if employee:
@@ -89,19 +89,26 @@ def get_object(id):
 # update a hired employee
 @app.route('/hired_employees/<int:id>', methods=['PUT'])
 def update_object(id):
-  try:
-    employee = HiredEmployees.query.filter_by(id=id).first()
-    if employee:
-      data = request.get_json()
-      employee.name = data['name']
-      employee.datetime = data['datetime']
-      employee.department_id = data['department_id']
-      employee.job_id = data['job_id']
-      db.session.commit()
-      return make_response(jsonify({'message': 'employee updated'}), 200)
-    return make_response(jsonify({'message': 'employee not found'}), 404)
-  except e:
-    return make_response(jsonify({'message': 'error updating employee'}), 500)
+    try:
+        employee = HiredEmployees.query.filter_by(id=id).first()
+        if not employee:
+            return make_response(jsonify({'message': 'employee not found'}), 404)
+
+        data = request.get_json()
+        if not isinstance(data, dict):
+            return make_response(jsonify({'message': 'Invalid input format, expected JSON object'}), 400)
+
+        employee.name = data.get('name', employee.name)
+        employee.datetime = data.get('datetime', employee.datetime)
+        employee.department_id = data.get('department_id', employee.department_id)
+        employee.job_id = data.get('job_id', employee.job_id)
+
+        db.session.commit()
+        return make_response(jsonify({'message': 'employee updated'}), 200)
+
+    except Exception as e:
+        print(f"Error updating employee: {e}")  
+        return make_response(jsonify({'message': 'error updating employee'}), 500)
 
 # delete a hired employee
 @app.route('/hired_employees/<int:id>', methods=['DELETE'])
