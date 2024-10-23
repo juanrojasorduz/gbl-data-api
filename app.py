@@ -122,3 +122,85 @@ def delete_object(id):
     return make_response(jsonify({'message': 'employee not found'}), 404)
   except e:
     return make_response(jsonify({'message': 'error deleting employee'}), 500)
+
+
+
+####### DEPARTMENTS
+# create a department
+@app.route('/departments', methods=['POST'])
+def create_object_departments(): 
+    try: 
+        data = request.get_json()        
+        if not isinstance(data, list):
+            return make_response(jsonify({'message': 'Invalid input, expected a list of departments'}), 400)        
+        if len(data) < 1 or len(data) > 1000:
+            return make_response(jsonify({'message': 'Number of departments must be between 1 and 1000'}), 400)
+
+        new_objects = []
+        for object_data in data:
+            if 'department' not in object_data:
+                return make_response(jsonify({'message': 'Each department must have a department name'}), 400)
+            
+            new_object = Departments(name=object_data['department'])
+            new_objects.append(new_object)
+
+        db.session.bulk_save_objects(new_objects)
+        db.session.commit()
+
+        return make_response(jsonify({'message': 'department created', 'count': len(new_objects)}), 201) 
+    except Exception as e: 
+        db.session.rollback()
+        return make_response(jsonify({'message': 'error creating department', 'error': str(e)}), 500)
+
+# get all departments
+@app.route('/departments', methods=['GET'])
+def get_object_departments():
+  try:
+    departments = Departments.query.all()
+    return make_response(jsonify([department.json() for department in departments]), 200)
+  except e:
+    return make_response(jsonify({'message': 'error getting department'}), 500)
+
+# get a department by id
+@app.route('/departments/<int:id>', methods=['GET'])
+def get_object_by_id_departments(id):
+  try:
+    department = Departments.query.filter_by(id=id).first()
+    if department:
+      return make_response(jsonify({'department': department.json()}), 200)
+    return make_response(jsonify({'message': 'department not found'}), 404)
+  except e:
+    return make_response(jsonify({'message': 'error getting department'}), 500)
+
+# update a department by id
+@app.route('/departments/<int:id>', methods=['PUT'])
+def update_object_departments(id):
+    try:
+        department = Departments.query.filter_by(id=id).first()
+        if not department:
+            return make_response(jsonify({'message': 'department not found'}), 404)
+
+        data = request.get_json()
+        if not isinstance(data, dict):
+            return make_response(jsonify({'message': 'Invalid input format, expected JSON object'}), 400)
+
+        department.department = data.get('department', department.department)
+        db.session.commit()
+        return make_response(jsonify({'message': 'department updated'}), 200)
+
+    except Exception as e:
+        print(f"Error updating department: {e}")  
+        return make_response(jsonify({'message': 'error updating department'}), 500)
+
+# delete a department by id
+@app.route('/departments/<int:id>', methods=['DELETE'])
+def delete_object_departments(id):
+  try:
+    department = Departments.query.filter_by(id=id).first()
+    if department:
+      db.session.delete(department)
+      db.session.commit()
+      return make_response(jsonify({'message': 'department deleted'}), 200)
+    return make_response(jsonify({'message': 'department not found'}), 404)
+  except e:
+    return make_response(jsonify({'message': 'error deleting department'}), 500)
