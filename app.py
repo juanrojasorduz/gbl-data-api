@@ -23,18 +23,31 @@ db.create_all()
 def test():
   return make_response(jsonify({'message': 'test route'}), 200)
 
-
 # create a user
 @app.route('/users', methods=['POST'])
-def create_user():
-  try:
-    data = request.get_json()
-    new_user = User(username=data['username'], email=data['email'])
-    db.session.add(new_user)
-    db.session.commit()
-    return make_response(jsonify({'message': 'user created'}), 201)
-  except e:
-    return make_response(jsonify({'message': 'error creating user'}), 500)
+def create_users(): 
+    try: 
+        data = request.get_json()        
+        if not isinstance(data, list):
+            return make_response(jsonify({'message': 'Invalid input, expected a list of users'}), 400)        
+        if len(data) < 1 or len(data) > 1000:
+            return make_response(jsonify({'message': 'Number of users must be between 1 and 1000'}), 400)
+
+        new_users = []
+        for user_data in data:
+            if 'username' not in user_data or 'email' not in user_data:
+                return make_response(jsonify({'message': 'Each user must have a username and email'}), 400)
+            
+            new_user = User(username=user_data['username'], email=user_data['email'])
+            new_users.append(new_user)
+
+        db.session.bulk_save_objects(new_users)
+        db.session.commit()
+
+        return make_response(jsonify({'message': 'users created', 'count': len(new_users)}), 201) 
+    except Exception as e: 
+        db.session.rollback()
+        return make_response(jsonify({'message': 'error creating users', 'error': str(e)}), 500)
 
 # get all users
 @app.route('/users', methods=['GET'])
