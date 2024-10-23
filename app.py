@@ -204,3 +204,84 @@ def delete_object_departments(id):
     return make_response(jsonify({'message': 'department not found'}), 404)
   except e:
     return make_response(jsonify({'message': 'error deleting department'}), 500)
+
+
+####### JOBS
+# create a job
+@app.route('/jobs', methods=['POST'])
+def create_object_jobs(): 
+    try: 
+        data = request.get_json()        
+        if not isinstance(data, list):
+            return make_response(jsonify({'message': 'Invalid input, expected a list of jobs'}), 400)        
+        if len(data) < 1 or len(data) > 1000:
+            return make_response(jsonify({'message': 'Number of jobs must be between 1 and 1000'}), 400)
+
+        new_objects = []
+        for object_data in data:
+            if 'job' not in object_data:
+                return make_response(jsonify({'message': 'Each job must have a job name'}), 400)
+            
+            new_object = Jobs(name=object_data['job'])
+            new_objects.append(new_object)
+
+        db.session.bulk_save_objects(new_objects)
+        db.session.commit()
+
+        return make_response(jsonify({'message': 'job created', 'count': len(new_objects)}), 201) 
+    except Exception as e: 
+        db.session.rollback()
+        return make_response(jsonify({'message': 'error creating job', 'error': str(e)}), 500)
+
+# get all jobs
+@app.route('/jobs', methods=['GET'])
+def get_object_jobs():
+  try:
+    jobs = Jobs.query.all()
+    return make_response(jsonify([job.json() for job in jobs]), 200)
+  except e:
+    return make_response(jsonify({'message': 'error getting job'}), 500)
+
+# get a job by id
+@app.route('/jobs/<int:id>', methods=['GET'])
+def get_object_by_id_jobs(id):
+  try:
+    job = Jobs.query.filter_by(id=id).first()
+    if job:
+      return make_response(jsonify({'job': job.json()}), 200)
+    return make_response(jsonify({'message': 'job not found'}), 404)
+  except e:
+    return make_response(jsonify({'message': 'error getting job'}), 500)
+
+# update a job by id
+@app.route('/jobs/<int:id>', methods=['PUT'])
+def update_object_jobs(id):
+    try:
+        job = Jobs.query.filter_by(id=id).first()
+        if not job:
+            return make_response(jsonify({'message': 'job not found'}), 404)
+
+        data = request.get_json()
+        if not isinstance(data, dict):
+            return make_response(jsonify({'message': 'Invalid input format, expected JSON object'}), 400)
+
+        job.job = data.get('job', job.job)
+        db.session.commit()
+        return make_response(jsonify({'message': 'job updated'}), 200)
+
+    except Exception as e:
+        print(f"Error updating job: {e}")  
+        return make_response(jsonify({'message': 'error updating job'}), 500)
+
+# delete a job by id
+@app.route('/jobs/<int:id>', methods=['DELETE'])
+def delete_object_jobs(id):
+  try:
+    job = Jobs.query.filter_by(id=id).first()
+    if job:
+      db.session.delete(job)
+      db.session.commit()
+      return make_response(jsonify({'message': 'job deleted'}), 200)
+    return make_response(jsonify({'message': 'job not found'}), 404)
+  except e:
+    return make_response(jsonify({'message': 'error deleting job'}), 500)    
