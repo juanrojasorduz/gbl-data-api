@@ -6,80 +6,119 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL')
 db = SQLAlchemy(app)
 
-class User(db.Model):
-    __tablename__ = 'users'
+class HiredEmployees(db.Model):
+    __tablename__ = 'hired_employees'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String(120), unique=True, nullable=False)
+    datetime = db.Column(db.String(120), unique=True, nullable=False)
+    department_id = db.Column(db.String(120), unique=True, nullable=False)
+    job_id = db.Column(db.String(120), unique=True, nullable=False)
 
     def json(self):
-        return {'id': self.id,'username': self.username, 'email': self.email}
+        return {'id': self.id,'name': self.name, 'datetime': self.datetime, 'department_id': self.department_id, 'job_id': self.job_id}
+
+class Departments(db.Model):
+    __tablename__ = 'departments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    department = db.Column(db.String(120), unique=True, nullable=False)
+
+    def json(self):
+        return {'id': self.id,'department': self.department}
+
+class Jobs(db.Model):
+    __tablename__ = 'jobs'
+
+    id = db.Column(db.Integer, primary_key=True)
+    job = db.Column(db.String(120), unique=True, nullable=False)
+
+    def json(self):
+        return {'id': self.id,'job': self.job}                
 
 db.create_all()
 
-#create a test route
-@app.route('/test', methods=['GET'])
-def test():
-  return make_response(jsonify({'message': 'test route'}), 200)
 
-
+####### HIRED EMPLOYEES
 # create a user
-@app.route('/users', methods=['POST'])
-def create_user():
-  try:
-    data = request.get_json()
-    new_user = User(username=data['username'], email=data['email'])
-    db.session.add(new_user)
-    db.session.commit()
-    return make_response(jsonify({'message': 'user created'}), 201)
-  except e:
-    return make_response(jsonify({'message': 'error creating user'}), 500)
+@app.route('/hired_employees', methods=['POST'])
+def create_object(): 
+    try: 
+        data = request.get_json()        
+        if not isinstance(data, list):
+            return make_response(jsonify({'message': 'Invalid input, expected a list of Hired Employees'}), 400)        
+        if len(data) < 1 or len(data) > 1000:
+            return make_response(jsonify({'message': 'Number of Hired Employees must be between 1 and 1000'}), 400)
 
-# get all users
-@app.route('/users', methods=['GET'])
-def get_users():
-  try:
-    users = User.query.all()
-    return make_response(jsonify([user.json() for user in users]), 200)
-  except e:
-    return make_response(jsonify({'message': 'error getting users'}), 500)
+        new_objects = []
+        for object_data in data:
+            if 'name' not in object_data or 'datetime' not in object_data or 'department_id' not in object_data or 'job_id' not in object_data:
+                return make_response(jsonify({'message': 'Each Hired Employee must have a username and email'}), 400)
+            
+            new_object = HiredEmployees(name=object_data['name'], datetime=object_data['datetime'], department_id=object_data['department_id'], job_id=object_data['job_id'])
+            new_objects.append(new_object)
 
-# get a user by id
-@app.route('/users/<int:id>', methods=['GET'])
-def get_user(id):
-  try:
-    user = User.query.filter_by(id=id).first()
-    if user:
-      return make_response(jsonify({'user': user.json()}), 200)
-    return make_response(jsonify({'message': 'user not found'}), 404)
-  except e:
-    return make_response(jsonify({'message': 'error getting user'}), 500)
+        db.session.bulk_save_objects(new_objects)
+        db.session.commit()
 
-# update a user
-@app.route('/users/<int:id>', methods=['PUT'])
-def update_user(id):
+        return make_response(jsonify({'message': 'Hired employee created', 'count': len(new_objects)}), 201) 
+    except Exception as e: 
+        db.session.rollback()
+        return make_response(jsonify({'message': 'error creating Hired employee', 'error': str(e)}), 500)
+
+# get all hired employees
+@app.route('/hired_employees', methods=['GET'])
+def get_object():
   try:
-    user = User.query.filter_by(id=id).first()
-    if user:
-      data = request.get_json()
-      user.username = data['username']
-      user.email = data['email']
+    hired_employees = HiredEmployees.query.all()
+    return make_response(jsonify([employee.json() for employee in hired_employees]), 200)
+  except e:
+    return make_response(jsonify({'message': 'error getting hired employees'}), 500)
+
+# get a hired employee by id
+@app.route('/hired_employees/<int:id>', methods=['GET'])
+def get_object_by_id(id):
+  try:
+    employee = HiredEmployees.query.filter_by(id=id).first()
+    if employee:
+      return make_response(jsonify({'employee': employee.json()}), 200)
+    return make_response(jsonify({'message': 'employee not found'}), 404)
+  except e:
+    return make_response(jsonify({'message': 'error getting employee'}), 500)
+
+# update a hired employee
+@app.route('/hired_employees/<int:id>', methods=['PUT'])
+def update_object(id):
+    try:
+        employee = HiredEmployees.query.filter_by(id=id).first()
+        if not employee:
+            return make_response(jsonify({'message': 'employee not found'}), 404)
+
+        data = request.get_json()
+        if not isinstance(data, dict):
+            return make_response(jsonify({'message': 'Invalid input format, expected JSON object'}), 400)
+
+        employee.name = data.get('name', employee.name)
+        employee.datetime = data.get('datetime', employee.datetime)
+        employee.department_id = data.get('department_id', employee.department_id)
+        employee.job_id = data.get('job_id', employee.job_id)
+
+        db.session.commit()
+        return make_response(jsonify({'message': 'employee updated'}), 200)
+
+    except Exception as e:
+        print(f"Error updating employee: {e}")  
+        return make_response(jsonify({'message': 'error updating employee'}), 500)
+
+# delete a hired employee
+@app.route('/hired_employees/<int:id>', methods=['DELETE'])
+def delete_object(id):
+  try:
+    employee = HiredEmployees.query.filter_by(id=id).first()
+    if employee:
+      db.session.delete(employee)
       db.session.commit()
-      return make_response(jsonify({'message': 'user updated'}), 200)
-    return make_response(jsonify({'message': 'user not found'}), 404)
+      return make_response(jsonify({'message': 'employee deleted'}), 200)
+    return make_response(jsonify({'message': 'employee not found'}), 404)
   except e:
-    return make_response(jsonify({'message': 'error updating user'}), 500)
-
-# delete a user
-@app.route('/users/<int:id>', methods=['DELETE'])
-def delete_user(id):
-  try:
-    user = User.query.filter_by(id=id).first()
-    if user:
-      db.session.delete(user)
-      db.session.commit()
-      return make_response(jsonify({'message': 'user deleted'}), 200)
-    return make_response(jsonify({'message': 'user not found'}), 404)
-  except e:
-    return make_response(jsonify({'message': 'error deleting user'}), 500)
+    return make_response(jsonify({'message': 'error deleting employee'}), 500)
