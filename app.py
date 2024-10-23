@@ -141,7 +141,7 @@ def create_object_departments():
             if 'department' not in object_data:
                 return make_response(jsonify({'message': 'Each department must have a department name'}), 400)
             
-            new_object = Departments(name=object_data['department'])
+            new_object = Departments(department=object_data['department'])
             new_objects.append(new_object)
 
         db.session.bulk_save_objects(new_objects)
@@ -222,7 +222,7 @@ def create_object_jobs():
             if 'job' not in object_data:
                 return make_response(jsonify({'message': 'Each job must have a job name'}), 400)
             
-            new_object = Jobs(name=object_data['job'])
+            new_object = Jobs(job=object_data['job'])
             new_objects.append(new_object)
 
         db.session.bulk_save_objects(new_objects)
