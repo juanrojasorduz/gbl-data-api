@@ -10,10 +10,10 @@ class HiredEmployees(db.Model):
     __tablename__ = 'hired_employees'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), unique=True, nullable=False)
-    datetime = db.Column(db.String(120), unique=True, nullable=False)
-    department_id = db.Column(db.String(120), unique=True, nullable=False)
-    job_id = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String(120), unique=False, nullable=True)
+    datetime = db.Column(db.String(120), unique=False, nullable=True)
+    department_id = db.Column(db.String(120), unique=False, nullable=True)
+    job_id = db.Column(db.String(120), unique=False, nullable=True)
 
     def json(self):
         return {'id': self.id,'name': self.name, 'datetime': self.datetime, 'department_id': self.department_id, 'job_id': self.job_id}
