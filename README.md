@@ -30,6 +30,17 @@ The purpose of this REST API service is to receive new data for hired employees,
     docker compose up --build flask_app
 ```
 ## Prove all methods:
+1. Hired Employees:
+```
+    [GET] localhost:4000/hired_employees
+    [GET] localhost:4000/hired_employees/{Id}
+    [POST] localhost:4000/hired_employees
+    [PUT] localhost:4000/hired_employees/{Id}
+    [DELETE] localhost:4000/hired_employees/{Id}
+```
+2. Departments:
+3. Jobs:
+
 
 get
 localhost:4000/users
