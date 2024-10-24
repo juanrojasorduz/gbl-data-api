@@ -54,3 +54,5 @@ The purpose of this REST API service is to receive new data for hired employees,
     [PUT] localhost:4000/jobs/{Id}   Updates a job by Id 
     [DELETE] localhost:4000/jobs/{Id}    Deletes a job by Id    
 ```
+
+Use folder data for body to load historical data, then you can do any changes needed.
