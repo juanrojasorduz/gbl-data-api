@@ -14,17 +14,21 @@ The purpose of this REST API service is to receive new data for hired employees,
     docker ps -a
 ```
 2. Run the Postgres container:
+```
     docker compose up -d flask_db
-
+```
 3. List all containers to verify:
+```
     docker ps -a
-
+```
 4. Build the docker Image:
+```
     docker compose build
-
+```
 5. Run the docker container:
+```
     docker compose up --build flask_app
-
+```
 ## Prove all methods:
 
 get
