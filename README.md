@@ -1,12 +1,12 @@
 # gbl-data-api
-Big data migration to a new database system
+The purpose of this REST API service is to receive new data for hired employees, jobs, and departments.
+
 
 ## Prerequisites:
-*Python
-*PostgreSQL 
-*Docker
-*Postman (Optional)
-*DBeaver (Optional)
+- Python
+- Docker
+- Postman 
+- DBeaver (Optional)
 
 ## Build and Run Containers
 List all containers:
