@@ -9,26 +9,20 @@ The purpose of this REST API service is to receive new data for hired employees,
 - DBeaver (Optional)
 
 ## Build and Run Containers
-List all containers:
-docker ps -a
+1. List all containers:
+    docker ps -a
 
-Run the Postgres container:
-docker compose up -d flask_db
+2. Run the Postgres container:
+    docker compose up -d flask_db
 
-List all containers to verify:
-docker ps -a
+3. List all containers to verify:
+    docker ps -a
 
-Build the docker Image:
-docker compose build
+4. Build the docker Image:
+    docker compose build
 
-Run the docker container:
-docker compose up flask_app
-docker compose up --build flask_app
-
-Once app is running:
-
-Test endpoint:
-http://localhost:4000/test
+5. Run the docker container:
+    docker compose up --build flask_app
 
 ## Prove all methods:
 
