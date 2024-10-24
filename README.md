@@ -32,33 +32,25 @@ The purpose of this REST API service is to receive new data for hired employees,
 ## Prove all methods:
 1. Hired Employees:
 ```
-    [GET] localhost:4000/hired_employees
-    [GET] localhost:4000/hired_employees/{Id}
-    [POST] localhost:4000/hired_employees
-    [PUT] localhost:4000/hired_employees/{Id}
-    [DELETE] localhost:4000/hired_employees/{Id}
+    [GET] localhost:4000/hired_employees    Gets all hired employees
+    [GET] localhost:4000/hired_employees/{Id}   Gets a hired employee by Id 
+    [POST] localhost:4000/hired_employees   Adds a batch of hired employees (1-1000)
+    [PUT] localhost:4000/hired_employees/{Id}   Updates a hired employee by Id 
+    [DELETE] localhost:4000/hired_employees/{Id}    Deletes a hired employee by Id    
 ```
 2. Departments:
+```
+    [GET] localhost:4000/departments    Gets all departments
+    [GET] localhost:4000/departments/{Id}   Gets a department by Id 
+    [POST] localhost:4000/departments   Adds a batch of departments (1-1000)
+    [PUT] localhost:4000/departments/{Id}   Updates a department by Id 
+    [DELETE] localhost:4000/departments/{Id}    Deletes a department by Id    
+```
 3. Jobs:
-
-
-get
-localhost:4000/users
-localhost:4000/users/1
-
-post
-localhost:4000/users
-{
-    "username":"Maria Perez",
-    "email":"maria.perez@gmail.com"
-}
-
-update
-localhost:4000/users/1
-{
-    "username":"Maria Perez",
-    "email":"maria.perez@gmail.com"
-}
-
-delete
-localhost:4000/users/2
+```
+    [GET] localhost:4000/jobs    Gets all jobs
+    [GET] localhost:4000/jobs/{Id}   Gets a job by Id 
+    [POST] localhost:4000/jobs   Adds a batch of jobs (1-1000)
+    [PUT] localhost:4000/jobs/{Id}   Updates a job by Id 
+    [DELETE] localhost:4000/jobs/{Id}    Deletes a job by Id    
+```
