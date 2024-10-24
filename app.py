@@ -52,9 +52,7 @@ def create_object():
 
         new_objects = []
         for object_data in data:
-            if 'name' not in object_data or 'datetime' not in object_data or 'department_id' not in object_data or 'job_id' not in object_data:
-                return make_response(jsonify({'message': 'Each Hired Employee must have a username and email'}), 400)
-            
+                      
             new_object = HiredEmployees(name=object_data['name'], datetime=object_data['datetime'], department_id=object_data['department_id'], job_id=object_data['job_id'])
             new_objects.append(new_object)
 

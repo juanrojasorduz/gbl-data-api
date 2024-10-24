@@ -1,14 +1,14 @@
 [
-	{"job": "Product Management"},
-	{"job": "Sales"},
-	{"job": "Research and Development"},
-	{"job": "Business Development"},
-	{"job": "Engineering"},
-	{"job": "Human Resources"},
-	{"job": "Services"},
-	{"job": "Support"},
-	{"job": "Marketing"},
-	{"job": "Training"},
-	{"job": "Legal"},
-	{"job": "Accounting"}
+	{"department": "Product Management"},
+	{"department": "Sales"},
+	{"department": "Research and Development"},
+	{"department": "Business Development"},
+	{"department": "Engineering"},
+	{"department": "Human Resources"},
+	{"department": "Services"},
+	{"department": "Support"},
+	{"department": "Marketing"},
+	{"department": "Training"},
+	{"department": "Legal"},
+	{"department": "Accounting"}
 ]
