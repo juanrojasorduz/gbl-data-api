@@ -10,8 +10,9 @@ The purpose of this REST API service is to receive new data for hired employees,
 
 ## Build and Run Containers
 1. List all containers:
+```
     docker ps -a
-
+```
 2. Run the Postgres container:
     docker compose up -d flask_db
 
